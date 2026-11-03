@@ -1,6 +1,16 @@
+module LMLM.Assistant;
+
+import LMLM.Models.Local;
+import LMLM.Runtime;
+
 @runtime(target: "local")
-@model(provider: "builtin", name: "default")
+@model(provider: "local", name: "default")
 @security(policy: "restricted")
 @capability(["inference"])
-@timeout(seconds: 60)
 @verify(mode: "required")
+
+model Assistant {
+    execute(input: Text) -> Response {
+        return model.generate(input);
+    }
+}
