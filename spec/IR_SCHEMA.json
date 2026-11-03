@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auraecosystem.github.io/Lmlm-lang/IR_SCHEMA.json",
+  "title": "LMLM normalized execution request v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["operation", "provider", "model", "input", "permissions", "verification"],
+  "properties": {
+    "operation": { "const": "model.generate" },
+    "provider": { "enum": ["local", "builtin"] },
+    "model": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "source"],
+      "properties": {
+        "type": { "const": "text" },
+        "source": { "enum": ["user_input"] }
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "items": { "enum": ["inference"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required"],
+      "properties": { "required": { "type": "boolean" } }
+    }
+  }
+}
