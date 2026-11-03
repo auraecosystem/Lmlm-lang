@@ -1,0 +1,6 @@
+@runtime(target: "local")
+@model(provider: "builtin", name: "default")
+@security(policy: "restricted")
+@capability(["inference"])
+@timeout(seconds: 60)
+@verify(mode: "required")
