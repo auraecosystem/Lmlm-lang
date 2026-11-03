@@ -1,0 +1,11 @@
+from __future__ import annotations
+
+from lmlm import runtime
+from lmlm.models import local
+
+@runtime(target="local")
+@local.model("default")
+class Assistant:
+    async def execute(self, prompt: str) -> str:
+        model = await local.load("default")
+        return await model.generate(prompt)
