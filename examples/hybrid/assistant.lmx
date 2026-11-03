@@ -1,0 +1,17 @@
+using System;
+using LMLM.Models.Local;
+
+from __future__ import annotations;
+
+using __ini__;
+
+@runtime(target="local")
+@model(provider="local", name="default")
+@security(policy="restricted")
+
+class Assistant {
+    public async Task<string> Execute(string prompt) {
+        var model = await models.load("default");
+        return await model.generate(prompt);
+    }
+}
