@@ -17,10 +17,8 @@ jobs:
   prepare:
     name: Prepare
     runs-on: ubuntu-latest
-    outputs:
-      python-matrix: '["3.10", "3.11", "3.12"]'
     steps:
-      - name: Record trusted event context
+      - name: Record event context
         run: |
           echo "event=${GITHUB_EVENT_NAME}"
           echo "ref=${GITHUB_REF}"
@@ -39,8 +37,8 @@ jobs:
           python-version: "3.12"
       - name: Compile Python sources
         run: python -m compileall -q src tests
-      - name: Check whitespace errors
-        run: git diff --check
+      - name: Check committed diff whitespace
+        run: git show --check --oneline HEAD
 
   test:
     name: Unit tests (Python ${{ matrix.python-version }})
