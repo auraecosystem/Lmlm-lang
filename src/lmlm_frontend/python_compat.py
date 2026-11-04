@@ -86,7 +86,10 @@ def parse(source: str) -> PythonProgram:
 
     imports: list[str] = []
     for statement in tree.body:
-        if isinstance(statement, ast.ImportFrom):
+        if isinstance(statement, ast.Import):
+            _fail(statement, "plain imports are not allowed in the .lpy profile",
+                  "E_IMPORT_NOT_ALLOWED")
+        elif isinstance(statement, ast.ImportFrom):
             if statement.level != 0 or len(statement.names) != 1:
                 _fail(statement, "only single-name absolute imports are allowed",
                       "E_IMPORT_NOT_ALLOWED")
@@ -143,7 +146,7 @@ def parse(source: str) -> PythonProgram:
     if len(methods) != 1 or len(cls.body) != 1:
         _fail(cls, "class must contain exactly one async execute method")
     method = methods[0]
-    if method.name != "execute" or method.decorator_list or method.type_params if hasattr(method, "type_params") else False:
+    if method.name != "execute" or method.decorator_list:
         _fail(method, "only undecorated async def execute is supported")
     if (len(method.args.args) != 2 or method.args.args[0].arg != "self"
             or method.args.args[1].annotation is None
