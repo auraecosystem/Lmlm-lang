@@ -151,7 +151,8 @@ def parse(source: str) -> PythonProgram:
     if (len(method.args.args) != 2 or method.args.args[0].arg != "self"
             or method.args.args[1].annotation is None
             or not _is_name(method.args.args[1].annotation, "str")
-            or method.args.vararg or method.args.kwarg or method.args.kwonlyargs
+            or method.args.posonlyargs or method.args.vararg or method.args.kwarg
+            or method.args.kwonlyargs
             or method.args.defaults or method.args.kw_defaults
             or not _is_name(method.returns, "str")):
         _fail(method, "execute signature must be async def execute(self, prompt: str) -> str",
@@ -186,7 +187,7 @@ def parse(source: str) -> PythonProgram:
             or not _is_name(generate.args[0], method.args.args[1].arg)):
         _fail(generate, "only model.generate(prompt) is supported")
 
-    return PythonProgram(".".join(imports), cls.name, model_id, method.name,
+    return PythonProgram("__main__", cls.name, model_id, method.name,
                          method.args.args[1].arg, tuple(imports))
 
 
