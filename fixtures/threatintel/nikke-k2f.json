@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "dataset_id": "nikke-k2f-user-supplied-2026-11",
+  "status": "unverified_indicators",
+  "handling": "offline_only",
+  "sha256": [
+    "cc0ad05bfe85940a6067b3a72c182d3953339129206634141926d5d0b35973ec",
+    "60fd53ab7356384ba2161b9bc84420cd170905011a2f3ca09f3e38fe3122f3a1",
+    "2f2aac505f486067af6831d6c75ea74df63acb1ed4e4002709c5962c68bd9203",
+    "3aaafbd612f04501a6fdb0bb8b2f8a87796223e5584ac18ea5eb180feeafb193",
+    "21d2fa4b6cdd15da3d5246687a01ef84fb848668144258b110606db5eb5ea7ce"
+  ],
+  "binary_prefixes_hex": ["1b4c4a01"],
+  "domains": [
+    "insightjs.com",
+    "analytics.insightjs.com",
+    "insightjs.org"
+  ],
+  "ips": ["89.127.233.127", "89.126.250.172"],
+  "paths": [
+    "launcher\\log\\tinyget",
+    "platformexperiencehelper\\",
+    "platform_experience_helper.dll"
+  ],
+  "text_markers": [
+    "k2f.agent.state",
+    "startup already in progress",
+    "k2f_chan registered",
+    "agent started as",
+    "lua downloaded to log\\tinyget"
+  ],
+  "notes": "User-supplied indicators are retained as unverified leads. A match is evidence for review, not proof of malware or compromise. No network enrichment is performed."
+}
