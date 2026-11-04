@@ -201,6 +201,13 @@ def parse(source: str) -> NativeProgram:
 
 def lower(program: NativeProgram) -> dict[str, Any]:
     """Lower a supported Native AST to normalized, validated v0.1 IR."""
+    allowed_imports = {"LMLM.Models.Local", "LMLM.Runtime"}
+    unknown_imports = set(program.imports) - allowed_imports
+    if unknown_imports:
+        raise NativeSemanticError(
+            f"imports are not allowlisted: {', '.join(sorted(unknown_imports))}"
+        )
+
     by_name: dict[str, Annotation] = {}
     allowed = {"runtime", "model", "security", "capability", "verify"}
     for annotation in program.annotations:
@@ -235,7 +242,7 @@ def lower(program: NativeProgram) -> dict[str, Any]:
         raise NativeSemanticError("@model requires exactly provider and name")
     provider = model_args["provider"]
     model = model_args["name"]
-    if provider not in {"local", "builtin"}:
+    if not isinstance(provider, str) or provider not in {"local", "builtin"}:
         raise NativeSemanticError("unsupported model provider")
     if not isinstance(model, str) or not model.strip() or len(model) > 128:
         raise NativeSemanticError("model name must be 1..128 characters")
