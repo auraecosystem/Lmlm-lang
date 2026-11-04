@@ -17,7 +17,7 @@ import LMLM.Runtime;
 @runtime(target: "local")
 @model(provider: "local", name: "default")
 @security(policy: "restricted")
-@capability(value: ["inference"])
+@capability(["inference"])
 @verify(mode: "required")
 
 model Assistant {
