@@ -16,9 +16,11 @@ These are three frontends, not three independent runtimes. Equivalent programs m
 
 The merged v0.1 foundation provides the language specification, source examples, IR schema, differential fixture, and fail-closed IR validator.
 
-The Native frontend is now being implemented incrementally. The current implementation supports a deliberately small `.lmlm` subset: module/import declarations, the documented annotations, and a single `model.generate` method body. It parses into an AST and lowers to the v0.1 IR. It does not execute source, authorize capabilities, load models, or provide a production runtime.
+The Native frontend supports a deliberately small `.lmlm` subset: module/import declarations, the documented annotations, and a single `model.generate` method body. It parses into an AST and lowers to the v0.1 IR.
 
-Python-compatible and Hybrid frontends are specified but not implemented yet.
+The Python-compatible frontend uses Python AST parsing with the Python 3.10 grammar and accepts only the documented LMLM imports, decorators, async method signature, model-load call, and generation call. It does not import or execute source. Both frontends lower equivalent examples to identical normalized IR, covered by a differential test.
+
+The Hybrid frontend is specified but not implemented yet. Neither frontend executes source, authorizes capabilities, loads models, or provides a production runtime.
 
 ## Quick validation
 
