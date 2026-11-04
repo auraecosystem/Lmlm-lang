@@ -38,6 +38,7 @@ cryptographically unforgeable execution token and does not itself execute code.
   IP strings, and log markers.
 - audit.py: JSONL event writer with an allowlisted schema to reduce accidental
   secret logging.
+- lmlm_lslc/: lifecycle preflight orchestration and CI entry point.
 
 ## Policy semantics
 
@@ -53,22 +54,29 @@ investigation. The dataset is marked unverified_indicators. Matching means
 "evidence requiring review", not proof of malware or compromise. The matcher
 does not resolve DNS, make HTTP requests, open sockets, or submit samples.
 
+## Secure lifecycle integration
+
+The LSLC workflow runs static compilation, the existing unit/integration tests,
+offline IOC fixture and matcher self-tests, package builds, and a fail-closed
+release eligibility job. See [SECURE_LIFECYCLE.md](SECURE_LIFECYCLE.md).
+
 ## Security limitations — explicit
 
-This foundation does not yet provide:
+This foundation and its CI workflow do not yet provide:
 
 - process, filesystem, network, or OS-level sandbox enforcement;
 - a production model/agent execution runtime;
 - Windows registry or persistence monitoring;
 - LevelDB decoding or compressed-record parsing;
 - cryptographically signed policy grants or agent identities;
-- tamper-evident/remote audit storage;
+- signed build provenance or tamper-evident/remote audit storage;
 - runtime wiring that prevents all execution paths from bypassing this gate.
 
-Do not treat this package alone as a security boundary for untrusted code. The
-runtime integration must make the gate mandatory and enforce OS isolation.
+Do not treat this package or a passing CI run as a security boundary for untrusted
+code. Runtime integration must make the gate mandatory and enforce OS isolation.
 
 ## Validation
 
     python -m pip install --editable .
     python -m unittest discover -s tests -v
+    python -m lmlm_lslc.cli self-test --fixture fixtures/threatintel/nikke-k2f.json
