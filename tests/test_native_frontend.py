@@ -79,6 +79,16 @@ class NativeFrontendTests(unittest.TestCase):
         with self.assertRaises(NativeSemanticError):
             compile_source(SOURCE.replace('target: "local"', 'target: "remote"'))
 
+    def test_rejects_unapproved_import(self):
+        source = SOURCE.replace("import LMLM.Runtime;", "import os;")
+        with self.assertRaises(NativeSemanticError):
+            compile_source(source)
+
+    def test_rejects_non_string_provider(self):
+        source = SOURCE.replace('provider: "local"', 'provider: ["local"]')
+        with self.assertRaises(NativeSemanticError):
+            compile_source(source)
+
 
 if __name__ == "__main__":
     unittest.main()
