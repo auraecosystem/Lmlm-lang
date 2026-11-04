@@ -12,17 +12,26 @@ LMLM Language defines three source profiles that compile toward one shared inter
 
 These are three frontends, not three independent runtimes. Equivalent programs must lower to equivalent normalized IR.
 
-## Repository status
+## Implementation status
 
-This repository was an empty language-project shell. The `feat/three-language-foundation` branch establishes the v0.1 specification, sample programs, IR schema, and a dependency-free IR validator. It is **not yet a complete compiler or executable runtime**.
+The merged v0.1 foundation provides the language specification, source examples, IR schema, differential fixture, and fail-closed IR validator.
+
+The Native frontend supports a deliberately small `.lmlm` subset: module/import declarations, the documented annotations, and a single `model.generate` method body. It parses into an AST and lowers to the v0.1 IR.
+
+The Python-compatible frontend uses Python AST parsing with the Python 3.10 grammar and accepts only the documented LMLM imports, decorators, async method signature, model-load call, and generation call. It does not import or execute source. Both frontends lower equivalent examples to identical normalized IR, covered by a differential test.
+
+The Hybrid frontend is specified but not implemented yet. Neither frontend executes source, authorizes capabilities, loads models, or provides a production runtime.
 
 ## Quick validation
 
 Requires Python 3.10+.
 
 ```bash
+python -m pip install --editable .
 python -m unittest discover -s tests -v
 ```
+
+GitHub Actions runs the test suite on Python 3.10, 3.11, and 3.12.
 
 ## Architecture
 
@@ -47,7 +56,9 @@ The language frontends never grant capabilities. An annotation such as `@capabil
 - `spec/LANGUAGE_SPEC_v0.1.md` — language profiles, semantics, imports, annotations, diagnostics, and compiler contract.
 - `spec/IR_SCHEMA.json` — machine-readable v0.1 IR schema.
 - `src/lmlm_ir/validator.py` — fail-closed structural validator.
-- `tests/` — IR validation tests.
+- `src/lmlm_frontend/native.py` — strict Native lexer/parser, AST, allowlisted imports, and v0.1 IR lowering.
+- `src/lmlm_frontend/python_compat.py` — restricted Python AST frontend and v0.1 IR lowering.
+- `tests/` — IR validation, Native/Python frontend, and differential conformance tests.
 - `examples/` — equivalent Native, Python-compatible, and Hybrid examples.
 - `fixtures/differential/` — canonical IR conformance fixture.
 
