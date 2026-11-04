@@ -1,0 +1,117 @@
+name: LMLM Secure Lifecycle
+
+on:
+  pull_request:
+  push:
+    branches: ["main", "feat/**", "fix/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lmlm-lslc-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      python-matrix: '["3.10", "3.11", "3.12"]'
+    steps:
+      - name: Record trusted event context
+        run: |
+          echo "event=${GITHUB_EVENT_NAME}"
+          echo "ref=${GITHUB_REF}"
+          echo "sha=${GITHUB_SHA}"
+
+  lint:
+    name: Lint and compile
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Python sources
+        run: python -m compileall -q src tests
+      - name: Check whitespace errors
+        run: git diff --check
+
+  test:
+    name: Unit tests (Python ${{ matrix.python-version }})
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package
+        run: python -m pip install --editable .
+      - name: Run unit and integration tests
+        run: python -m unittest discover -s tests -v
+
+  security:
+    name: Offline security controls
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: python -m pip install --editable .
+      - name: Validate offline IOC fixture and matcher
+        run: python -m lmlm_lslc.cli self-test --fixture fixtures/threatintel/nikke-k2f.json
+
+  build:
+    name: Build distribution
+    needs: [lint, test, security]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tooling
+        run: python -m pip install --upgrade build
+      - name: Build wheel and source distribution
+        run: python -m build
+      - name: Verify wheel contents
+        run: python -m zipfile -l dist/*.whl
+
+  release-gate:
+    name: Release eligibility
+    if: always()
+    needs: [lint, test, security, build]
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Require every mandatory job to succeed
+        env:
+          LINT: ${{ needs.lint.result }}
+          TEST: ${{ needs.test.result }}
+          SECURITY: ${{ needs.security.result }}
+          BUILD: ${{ needs.build.result }}
+        run: |
+          printf 'lint=%s\ntest=%s\nsecurity=%s\nbuild=%s\n' "$LINT" "$TEST" "$SECURITY" "$BUILD"
+          test "$LINT" = success
+          test "$TEST" = success
+          test "$SECURITY" = success
+          test "$BUILD" = success
