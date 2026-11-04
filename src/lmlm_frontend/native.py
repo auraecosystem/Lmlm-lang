@@ -130,17 +130,21 @@ class _Parser:
         self.take("(")
         args: dict[str, Any] = {}
         if self.current.value != ")":
-            while True:
-                key = self.take(kind="IDENT").value
-                self.take(":")
-                if key in args:
-                    raise NativeSyntaxError(f"duplicate annotation argument {key!r}", self.current.offset)
-                args[key] = self.value()
-                if self.current.value != ",":
-                    break
-                self.take(",")
-                if self.current.value == ")":
-                    break
+            # A single positional value is supported for @capability([...]).
+            if self.current.value == "[":
+                args["value"] = self.value()
+            else:
+                while True:
+                    key = self.take(kind="IDENT").value
+                    self.take(":")
+                    if key in args:
+                        raise NativeSyntaxError(f"duplicate annotation argument {key!r}", self.current.offset)
+                    args[key] = self.value()
+                    if self.current.value != ",":
+                        break
+                    self.take(",")
+                    if self.current.value == ")":
+                        break
         self.take(")")
         return Annotation(name, args, start)
 
