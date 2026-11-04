@@ -19,15 +19,38 @@
   "ips": ["89.127.233.127", "89.126.250.172"],
   "paths": [
     "launcher\\log\\tinyget",
+    "launcher\\intl_service\\debug.log",
+    "tbs_cache\\code cache\\js",
+    "tbs_cache\\local storage\\leveldb",
     "platformexperiencehelper\\",
-    "platform_experience_helper.dll"
+    "platform_experience_helper.dll",
+    "k2f-bcreds-",
+    "k2f_screen_",
+    "k2f-keyscan-"
   ],
   "text_markers": [
     "k2f.agent.state",
     "startup already in progress",
     "k2f_chan registered",
+    "adopted",
+    "resuming",
     "agent started as",
-    "lua downloaded to log\\tinyget"
+    "lua downloaded to log\\tinyget",
+    "{e77cc89b-7401-4c04-8ced-149db35add04}",
+    "dd65fa4d61079e7e_0",
+    "ce2fd3f1007a9fe9_0",
+    "1416c638b3830103_0",
+    "fd520c7c0f65c2d7_0",
+    "https://insightjs.com/l.js?f=aegis",
+    "https://insightjs.com/l.js?f=images",
+    "https://insightjs.com/l.js?f=feedlist",
+    "https://insightjs.com/l.js?f=vue",
+    "https://analytics.insightjs.com/comm/assets/insight.bundle",
+    "https://analytics.insightjs.com/px/",
+    "https://sg-gpts.playerinfinite.com/comm/assets/lib/aegis-fix.min.js",
+    "https://na-webassets.playerinfinite.com/comm/nikke_launcher/assets/images.7fec4c32.js",
+    "https://na-webassets.playerinfinite.com/comm/nikke_launcher/assets/feedlist.feb647c9.js",
+    "https://na-webassets.playerinfinite.com/comm/assets/lib/vue-bucket.min.js"
   ],
   "notes": "User-supplied indicators are retained as unverified leads. A match is evidence for review, not proof of malware or compromise. No network enrichment is performed."
 }
