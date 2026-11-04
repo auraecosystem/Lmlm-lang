@@ -9,6 +9,9 @@ description = "Shared intermediate representation contract for LMLM language fro
 requires-python = ">=3.10"
 dependencies = []
 
+[project.scripts]
+lmlm-lslc = "lmlm_lslc.cli:main"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 

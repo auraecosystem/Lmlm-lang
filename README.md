@@ -22,6 +22,22 @@ The Python-compatible frontend uses Python AST parsing with the Python 3.10 gram
 
 The Hybrid frontend is specified but not implemented yet. Neither frontend executes source, authorizes capabilities, loads models, or provides a production runtime.
 
+## Secure Lifecycle Control (LSLC)
+
+The `lmlm_lslc` package coordinates local and GitHub Actions preflight checks: offline IOC fixture validation, security matcher self-tests, unit tests, Python source compilation, package builds, and a fail-closed release eligibility job.
+
+Run locally:
+
+```bash
+python -m pip install --editable .
+python -m unittest discover -s tests -v
+python -m lmlm_lslc.cli self-test --fixture fixtures/threatintel/nikke-k2f.json
+```
+
+The CI workflow is `.github/workflows/lmlm-secure-lifecycle.yml`. It uses read-only workflow permissions, does not use `pull_request_target`, and does not contact supplied IOC domains or IP addresses.
+
+**Scope warning:** LSLC is currently a CI/preflight coordinator, not an OS sandbox, production runtime, artifact-signing system, or proof that an artifact is safe. Runtime authorization must remain mandatory and independently enforced by LMLM.
+
 ## Quick validation
 
 Requires Python 3.10+.
@@ -58,9 +74,11 @@ The language frontends never grant capabilities. An annotation such as `@capabil
 - `src/lmlm_ir/validator.py` — fail-closed structural validator.
 - `src/lmlm_frontend/native.py` — strict Native lexer/parser, AST, allowlisted imports, and v0.1 IR lowering.
 - `src/lmlm_frontend/python_compat.py` — restricted Python AST frontend and v0.1 IR lowering.
-- `tests/` — IR validation, Native/Python frontend, and differential conformance tests.
-- `examples/` — equivalent Native, Python-compatible, and Hybrid examples.
-- `fixtures/differential/` — canonical IR conformance fixture.
+- `src/lmlm_security/` — policy engine, IR security gate, integrity measurement, offline threat intelligence, and audit writer.
+- `src/lmlm_lslc/` — secure lifecycle preflight orchestration and CLI.
+- `tests/` — IR validation, frontend, differential, security and LSLC tests.
+- `fixtures/threatintel/` — offline, user-supplied unverified indicator fixtures.
+- `docs/SECURITY_CONTROL_PLANE.md` and `docs/SECURE_LIFECYCLE.md` — security and lifecycle scope.
 
 ## Security invariants
 
@@ -69,5 +87,7 @@ The language frontends never grant capabilities. An annotation such as `@capabil
 3. Source annotations are metadata, not authorization.
 4. Model loading, tools, filesystem access, and remote agents require explicit policy decisions.
 5. Remote execution is mediated by authorized adapters; the LMLM control plane remains authoritative.
+6. IOC matching is offline-only; matches are evidence for review, not proof of compromise.
+7. CI success does not grant runtime capabilities or authorize execution.
 
-See [Language Specification v0.1](spec/LANGUAGE_SPEC_v0.1.md).
+See [Language Specification v0.1](spec/LANGUAGE_SPEC_v0.1.md), [Security Control Plane](docs/SECURITY_CONTROL_PLANE.md), and [Secure Lifecycle](docs/SECURE_LIFECYCLE.md).
