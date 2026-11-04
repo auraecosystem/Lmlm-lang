@@ -57,7 +57,8 @@ The language frontends never grant capabilities. An annotation such as `@capabil
 - `spec/IR_SCHEMA.json` — machine-readable v0.1 IR schema.
 - `src/lmlm_ir/validator.py` — fail-closed structural validator.
 - `src/lmlm_frontend/native.py` — strict Native lexer/parser, AST, allowlisted imports, and v0.1 IR lowering.
-- `tests/` — IR validator and Native frontend tests.
+- `src/lmlm_frontend/python_compat.py` — restricted Python AST frontend and v0.1 IR lowering.
+- `tests/` — IR validation, Native/Python frontend, and differential conformance tests.
 - `examples/` — equivalent Native, Python-compatible, and Hybrid examples.
 - `fixtures/differential/` — canonical IR conformance fixture.
 
