@@ -6,6 +6,7 @@ performed here. Applications inject explicitly configured provider adapters.
 from __future__ import annotations
 
 import asyncio
+import inspect
 from dataclasses import dataclass, field
 import time
 from typing import Any, Awaitable, Callable, Mapping, Protocol
@@ -111,7 +112,7 @@ class Runtime:
             if self.verifier is None:
                 raise ExecutionError("verification is required but no verifier is configured")
             verdict = self.verifier(output)
-            if asyncio.iscoroutine(verdict):
+            if inspect.isawaitable(verdict):
                 verdict = await verdict
             if verdict is not True:
                 raise ExecutionError("output verification failed")
